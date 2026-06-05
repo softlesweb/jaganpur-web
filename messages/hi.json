@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "home": "मुखपृष्ठ",
+    "directory": "संपर्क सूची",
+    "gallery": "गैलरी",
+    "admin": "प्रशासन"
+  },
+  "home": {
+    "title": "जगनपुर ग्राम",
+    "subtitle": "ग्राम की सभी सूचनाएं एक जगह",
+    "all": "सभी",
+    "noAnnouncements": "कोई सूचना नहीं",
+    "emergency": "आपातकालीन सूचना"
+  },
+  "categories": {
+    "general": "सामान्य",
+    "farming": "खेती",
+    "health": "स्वास्थ्य",
+    "school": "विद्यालय",
+    "government": "सरकारी",
+    "emergency": "आपातकाल"
+  },
+  "announcement": {
+    "shareWhatsApp": "व्हाट्सऐप पर शेयर करें",
+    "postedOn": "पोस्ट किया",
+    "readMore": "अधिक पढ़ें"
+  },
+  "login": {
+    "title": "जगनपुर में लॉगिन करें",
+    "subtitle": "अपना व्हाट्सऐप नंबर दर्ज करें",
+    "phonePlaceholder": "मोबाइल नंबर (जैसे 9876543210)",
+    "sendOtp": "OTP भेजें",
+    "otpSent": "OTP आपके व्हाट्सऐप पर भेजा गया",
+    "otpPlaceholder": "6 अंकों का OTP दर्ज करें",
+    "verify": "सत्यापित करें",
+    "nameLabel": "आपका नाम",
+    "namePlaceholder": "अपना नाम दर्ज करें",
+    "saveName": "जारी रखें",
+    "sending": "भेजा जा रहा है...",
+    "verifying": "सत्यापित हो रहा है...",
+    "changePhone": "नंबर बदलें",
+    "welcome": "जगनपुर में आपका स्वागत है!"
+  },
+  "directory": {
+    "title": "संपर्क सूची",
+    "subtitle": "जगनपुर के महत्वपूर्ण संपर्क",
+    "call": "कॉल करें",
+    "noContacts": "कोई संपर्क नहीं"
+  },
+  "gallery": {
+    "title": "फोटो गैलरी",
+    "subtitle": "जगनपुर की यादें",
+    "noPhotos": "कोई फोटो नहीं"
+  },
+  "admin": {
+    "title": "प्रशासन पैनल",
+    "announcements": "घोषणाएं",
+    "contacts": "संपर्क",
+    "gallery": "गैलरी",
+    "postAnnouncement": "नई घोषणा",
+    "addContact": "संपर्क जोड़ें",
+    "uploadPhoto": "फोटो अपलोड करें",
+    "title_field": "शीर्षक",
+    "body_field": "विवरण",
+    "category_field": "श्रेणी",
+    "isEmergency": "आपातकालीन सूचना",
+    "image_field": "फोटो (वैकल्पिक)",
+    "submit": "पोस्ट करें",
+    "saving": "सहेजा जा रहा है...",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "confirmDelete": "क्या आप वाकई हटाना चाहते हैं?",
+    "broadcastSent": "व्हाट्सऐप पर सूचना भेजी गई",
+    "name_field": "नाम",
+    "phone_field": "फोन",
+    "address_field": "पता",
+    "hours_field": "समय",
+    "caption_field": "कैप्शन",
+    "album_field": "एल्बम"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "error": "कुछ गलत हुआ",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "logout": "लॉगआउट"
+  }
+}

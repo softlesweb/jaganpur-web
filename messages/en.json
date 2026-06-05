@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "home": "Home",
+    "directory": "Directory",
+    "gallery": "Gallery",
+    "admin": "Admin"
+  },
+  "home": {
+    "title": "Jaganpur Village",
+    "subtitle": "All village announcements in one place",
+    "all": "All",
+    "noAnnouncements": "No announcements yet",
+    "emergency": "Emergency Alert"
+  },
+  "categories": {
+    "general": "General",
+    "farming": "Farming",
+    "health": "Health",
+    "school": "School",
+    "government": "Government",
+    "emergency": "Emergency"
+  },
+  "announcement": {
+    "shareWhatsApp": "Share on WhatsApp",
+    "postedOn": "Posted on",
+    "readMore": "Read more"
+  },
+  "login": {
+    "title": "Login to Jaganpur",
+    "subtitle": "Enter your WhatsApp number",
+    "phonePlaceholder": "Mobile number (e.g. 9876543210)",
+    "sendOtp": "Send OTP",
+    "otpSent": "OTP sent to your WhatsApp",
+    "otpPlaceholder": "Enter 6-digit OTP",
+    "verify": "Verify",
+    "nameLabel": "Your Name",
+    "namePlaceholder": "Enter your name",
+    "saveName": "Continue",
+    "sending": "Sending...",
+    "verifying": "Verifying...",
+    "changePhone": "Change number",
+    "welcome": "Welcome to Jaganpur!"
+  },
+  "directory": {
+    "title": "Contact Directory",
+    "subtitle": "Important contacts for Jaganpur",
+    "call": "Call",
+    "noContacts": "No contacts added yet"
+  },
+  "gallery": {
+    "title": "Photo Gallery",
+    "subtitle": "Memories from Jaganpur",
+    "noPhotos": "No photos yet"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "announcements": "Announcements",
+    "contacts": "Contacts",
+    "gallery": "Gallery",
+    "postAnnouncement": "New Announcement",
+    "addContact": "Add Contact",
+    "uploadPhoto": "Upload Photo",
+    "title_field": "Title",
+    "body_field": "Description",
+    "category_field": "Category",
+    "isEmergency": "Emergency Alert",
+    "image_field": "Photo (optional)",
+    "submit": "Post",
+    "saving": "Saving...",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirmDelete": "Are you sure you want to delete?",
+    "broadcastSent": "WhatsApp notification sent",
+    "name_field": "Name",
+    "phone_field": "Phone",
+    "address_field": "Address",
+    "hours_field": "Hours",
+    "caption_field": "Caption",
+    "album_field": "Album"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "logout": "Logout"
+  }
+}
