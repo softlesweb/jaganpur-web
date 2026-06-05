@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { Home, BookOpen, Image, Settings, LogOut } from "lucide-react";
+import { Home, BookOpen, Image, Settings, UserCircle } from "lucide-react";
 
 interface Props {
   role: "resident" | "admin";
@@ -20,12 +20,8 @@ export default function BottomNav({ role }: Props) {
     { href: `/${locale}/directory`, label: t("directory"), icon: BookOpen },
     { href: `/${locale}/gallery`, label: t("gallery"), icon: Image },
     ...(role === "admin" ? [{ href: `/${locale}/admin`, label: t("admin"), icon: Settings }] : []),
+    { href: `/${locale}/profile`, label: tCommon("profile"), icon: UserCircle },
   ];
-
-  async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = `/${locale}/login`;
-  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 safe-area-bottom z-50">
@@ -45,13 +41,6 @@ export default function BottomNav({ role }: Props) {
             </Link>
           );
         })}
-        <button
-          onClick={logout}
-          className="flex flex-col items-center gap-0.5 px-3 py-1 text-stone-400 hover:text-red-500 transition-colors"
-        >
-          <LogOut className="h-5 w-5" strokeWidth={1.8} />
-          <span className="text-[10px] font-medium">{tCommon("logout")}</span>
-        </button>
       </div>
     </nav>
   );

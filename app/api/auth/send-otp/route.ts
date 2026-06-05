@@ -28,18 +28,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create OTP" }, { status: 500 });
   }
 
-  // In development, return OTP directly for testing
-  if (process.env.NODE_ENV === "development") {
-    console.log(`[DEV] OTP for ${normalized}: ${otp}`);
-    return NextResponse.json({ success: true, dev_otp: otp });
-  }
-
   try {
     await sendOtp(normalized, otp);
   } catch (err) {
     console.error("WhatsApp send failed:", err);
-    // Still return success to not reveal if phone exists, but log the error
-    return NextResponse.json({ error: "Failed to send OTP" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to send OTP via WhatsApp" }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

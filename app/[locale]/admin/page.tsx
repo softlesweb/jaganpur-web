@@ -13,7 +13,7 @@ import { Trash2, Plus, AlertTriangle } from "lucide-react";
 
 const CATEGORIES: AnnouncementCategory[] = ["general", "farming", "health", "school", "government", "emergency"];
 
-type AdminTab = "announcements" | "contacts" | "gallery";
+type AdminTab = "announcements" | "contacts" | "gallery" | "broadcast";
 
 export default function AdminPage() {
   const t = useTranslations("admin");
@@ -23,8 +23,8 @@ export default function AdminPage() {
     <div className="max-w-lg mx-auto px-4 pt-6">
       <h1 className="text-2xl font-bold text-green-800 mb-4">{t("title")}</h1>
 
-      <div className="flex gap-2 mb-6">
-        {(["announcements", "contacts", "gallery"] as AdminTab[]).map((t_) => (
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
+        {(["announcements", "contacts", "gallery", "broadcast"] as AdminTab[]).map((t_) => (
           <button
             key={t_}
             onClick={() => setTab(t_)}
@@ -42,6 +42,7 @@ export default function AdminPage() {
       {tab === "announcements" && <AnnouncementsTab />}
       {tab === "contacts" && <ContactsTab />}
       {tab === "gallery" && <GalleryTab />}
+      {tab === "broadcast" && <BroadcastTab />}
     </div>
   );
 }
@@ -280,6 +281,61 @@ function GalleryTab() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function BroadcastTab() {
+  const t = useTranslations("admin");
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const [result, setResult] = useState<{ total: number; failed: number } | null>(null);
+
+  async function send() {
+    if (!message.trim()) { toast.error("संदेश खाली नहीं हो सकता"); return; }
+    setSending(true);
+    setResult(null);
+    const res = await fetch("/api/admin/broadcast", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    });
+    const data = await res.json();
+    setSending(false);
+    if (!res.ok) { toast.error(data.error); return; }
+    setResult(data);
+    toast.success(`${t("broadcastSuccess")} — ${data.total} लोगों को भेजा गया`);
+    setMessage("");
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-white rounded-2xl border border-stone-100 p-4 space-y-3">
+        <h2 className="font-semibold text-stone-800">{t("broadcastMessage")}</h2>
+        <p className="text-xs text-stone-400">
+          सभी opted-in निवासियों को WhatsApp पर सीधे संदेश भेजा जाएगा।
+        </p>
+        <Textarea
+          placeholder={t("broadcastPlaceholder")}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          rows={4}
+        />
+        <Button
+          className="w-full bg-green-700 hover:bg-green-800"
+          onClick={send}
+          disabled={sending || !message.trim()}
+        >
+          {sending ? t("broadcastSending") : `📣 ${t("broadcastSend")}`}
+        </Button>
+      </div>
+
+      {result && (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800">
+          ✓ {result.total - result.failed} / {result.total} संदेश सफलतापूर्वक भेजे गए
+          {result.failed > 0 && <span className="text-red-600"> ({result.failed} विफल)</span>}
+        </div>
+      )}
     </div>
   );
 }

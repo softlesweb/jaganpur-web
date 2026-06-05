@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { createSession, getOrCreateUser } from "@/lib/auth";
+import { getContactName } from "@/lib/whatsapp";
 
 export async function POST(req: NextRequest) {
   const { phone, otp } = await req.json();
@@ -29,7 +30,17 @@ export async function POST(req: NextRequest) {
 
   await db.from("otp_codes").update({ used: true }).eq("id", otpRecord.id);
 
-  const user = await getOrCreateUser(normalized);
+  let user = await getOrCreateUser(normalized);
+
+  // Auto-populate name from WhatsApp bridge if not set yet
+  if (!user.name) {
+    const waName = await getContactName(normalized);
+    if (waName) {
+      await db.from("profiles").update({ name: waName }).eq("id", user.id);
+      user = { ...user, name: waName };
+    }
+  }
+
   const token = await createSession(user);
 
   const response = NextResponse.json({ success: true, user });

@@ -71,6 +71,12 @@
     "edit": "Edit",
     "confirmDelete": "Are you sure you want to delete?",
     "broadcastSent": "WhatsApp notification sent",
+    "broadcast": "Broadcast",
+    "broadcastMessage": "Message all residents",
+    "broadcastPlaceholder": "Write your message...",
+    "broadcastSend": "Send",
+    "broadcastSending": "Sending...",
+    "broadcastSuccess": "Message sent",
     "name_field": "Name",
     "phone_field": "Phone",
     "address_field": "Address",
@@ -83,6 +89,7 @@
     "error": "Something went wrong",
     "save": "Save",
     "cancel": "Cancel",
-    "logout": "Logout"
+    "logout": "Logout",
+    "profile": "Profile"
   }
 }

@@ -57,6 +57,7 @@
     "announcements": "घोषणाएं",
     "contacts": "संपर्क",
     "gallery": "गैलरी",
+    "broadcast": "ब्रॉडकास्ट",
     "postAnnouncement": "नई घोषणा",
     "addContact": "संपर्क जोड़ें",
     "uploadPhoto": "फोटो अपलोड करें",
@@ -71,6 +72,11 @@
     "edit": "संपादित करें",
     "confirmDelete": "क्या आप वाकई हटाना चाहते हैं?",
     "broadcastSent": "व्हाट्सऐप पर सूचना भेजी गई",
+    "broadcastMessage": "सभी को संदेश भेजें",
+    "broadcastPlaceholder": "संदेश लिखें...",
+    "broadcastSend": "भेजें",
+    "broadcastSending": "भेजा जा रहा है...",
+    "broadcastSuccess": "संदेश भेजा गया",
     "name_field": "नाम",
     "phone_field": "फोन",
     "address_field": "पता",
@@ -83,6 +89,7 @@
     "error": "कुछ गलत हुआ",
     "save": "सहेजें",
     "cancel": "रद्द करें",
-    "logout": "लॉगआउट"
+    "logout": "लॉगआउट",
+    "profile": "प्रोफ़ाइल"
   }
 }
