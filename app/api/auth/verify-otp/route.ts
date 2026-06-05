@@ -30,6 +30,12 @@ export async function POST(req: NextRequest) {
 
   await db.from("otp_codes").update({ used: true }).eq("id", otpRecord.id);
 
+  const { user: existingCheck } = await (async () => {
+    const { data } = await db.from("profiles").select("id").eq("phone", normalized).single();
+    return { user: data };
+  })();
+  const isNewUser = !existingCheck;
+
   let user = await getOrCreateUser(normalized);
 
   // Auto-populate name from WhatsApp bridge if not set yet
@@ -41,9 +47,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Fetch digital_id
+  const { data: profile } = await db
+    .from("profiles")
+    .select("digital_id")
+    .eq("id", user.id)
+    .single();
+
   const token = await createSession(user);
 
-  const response = NextResponse.json({ success: true, user });
+  const response = NextResponse.json({
+    success: true,
+    user: { ...user, digital_id: profile?.digital_id },
+    is_new_user: isNewUser,
+  });
   response.cookies.set("auth_token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

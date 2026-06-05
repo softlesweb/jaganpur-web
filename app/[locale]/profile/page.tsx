@@ -16,6 +16,7 @@ interface Profile {
   role: string;
   wa_opt_in: boolean;
   profile_photo_url: string | null;
+  digital_id: number | null;
 }
 
 export default function ProfilePage() {
@@ -174,8 +175,8 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Phone */}
-      <div className="bg-white rounded-2xl border border-stone-100 p-4 mb-4">
+      {/* Phone + Digital ID */}
+      <div className="bg-white rounded-2xl border border-stone-100 p-4 mb-4 space-y-3">
         <div className="flex items-center gap-3">
           <Phone className="h-4 w-4 text-stone-400" />
           <div>
@@ -183,6 +184,17 @@ export default function ProfilePage() {
             <p className="font-medium text-stone-800">{profile.phone}</p>
           </div>
         </div>
+        {profile.digital_id && (
+          <div className="flex items-center gap-3 pt-1 border-t border-stone-50">
+            <span className="text-lg">🪪</span>
+            <div>
+              <p className="text-xs text-stone-400">{locale === "hi" ? "Digital ID" : "Digital ID"}</p>
+              <p className="font-bold text-green-700 tracking-wider">
+                JGP-{String(profile.digital_id).padStart(4, "0")}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* WhatsApp notifications */}
