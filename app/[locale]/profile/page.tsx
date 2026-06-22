@@ -5,8 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Camera, Phone, Bell, BellOff, LogOut } from "lucide-react";
+import { Camera, Phone, Bell, BellOff, LogOut, ChevronRight } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 
 const EDUCATION_LEVELS = [
@@ -90,7 +89,7 @@ export default function ProfilePage() {
     setSaving(false);
     if (!res.ok) { toast.error(data.error); return; }
     setProfile((p) => p ? { ...p, name: data.name } : p);
-    toast.success(locale === "hi" ? "नाम सहेजा गया" : "Name saved");
+    toast.success("नाम सहेजा गया ✓");
   }
 
   async function toggleOptIn() {
@@ -102,10 +101,7 @@ export default function ProfilePage() {
     });
     if (res.ok) {
       setProfile((p) => p ? { ...p, wa_opt_in: newVal } : p);
-      toast.success(newVal
-        ? (locale === "hi" ? "WhatsApp सूचनाएं चालू" : "WhatsApp notifications on")
-        : (locale === "hi" ? "WhatsApp सूचनाएं बंद" : "WhatsApp notifications off")
-      );
+      toast.success(newVal ? "WhatsApp सूचनाएं चालू ✓" : "WhatsApp सूचनाएं बंद");
     }
   }
 
@@ -120,7 +116,7 @@ export default function ProfilePage() {
     setSavingStudent(false);
     if (!res.ok) { toast.error(data.error); return; }
     setProfile((p) => p ? { ...p, education_level: data.education_level, exam_target: data.exam_target, school_name: data.school_name } : p);
-    toast.success(locale === "hi" ? "जानकारी सहेजी गई" : "Details saved");
+    toast.success("जानकारी सहेजी गई ✓");
   }
 
   async function uploadAvatar() {
@@ -134,7 +130,7 @@ export default function ProfilePage() {
     setUploading(false);
     if (!res.ok) { toast.error(data.error); return; }
     setProfile((p) => p ? { ...p, profile_photo_url: data.url } : p);
-    toast.success(locale === "hi" ? "फोटो अपडेट की गई" : "Photo updated");
+    toast.success("फोटो अपडेट की गई ✓");
     if (fileRef.current) fileRef.current.value = "";
   }
 
@@ -158,178 +154,173 @@ export default function ProfilePage() {
     .toUpperCase()
     .slice(0, 2);
 
-  return (
-    <div className="max-w-lg mx-auto px-4 pt-6 pb-8">
-      <h1 className="text-2xl font-bold text-green-800 mb-6">
-        {locale === "hi" ? "मेरी प्रोफ़ाइल" : "My Profile"}
-      </h1>
+  const digitalId = profile.digital_id
+    ? `JGP-${String(profile.digital_id).padStart(4, "0")}`
+    : null;
 
-      {/* Avatar */}
-      <div className="flex flex-col items-center mb-8">
-        <div className="relative">
-          <div className="w-24 h-24 rounded-full overflow-hidden bg-green-100 flex items-center justify-center border-4 border-white shadow-md">
-            {profile.profile_photo_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={profile.profile_photo_url}
-                alt={profile.name ?? ""}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-3xl font-bold text-green-700">{initials}</span>
-            )}
-          </div>
-          <button
-            onClick={() => fileRef.current?.click()}
-            className="absolute bottom-0 right-0 bg-green-600 text-white rounded-full p-1.5 shadow-md hover:bg-green-700"
-          >
-            <Camera className="h-4 w-4" />
-          </button>
-        </div>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={uploadAvatar}
-        />
-        {uploading && (
-          <p className="text-xs text-stone-400 mt-2">
-            {locale === "hi" ? "अपलोड हो रहा है..." : "Uploading..."}
-          </p>
-        )}
+  return (
+    <div className="max-w-lg mx-auto">
+      {/* Green hero with avatar */}
+      <div className="bg-gradient-to-br from-green-900 via-green-800 to-emerald-700 px-5 pt-6 pb-20 relative overflow-hidden">
+        <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-white/5" />
+        <h1 className="relative text-white font-bold text-lg mb-1">मेरी प्रोफ़ाइल</h1>
         {profile.role === "admin" && (
-          <span className="mt-2 text-xs bg-green-100 text-green-700 font-semibold px-2.5 py-0.5 rounded-full">
+          <span className="relative text-xs bg-white/20 text-white font-semibold px-2.5 py-0.5 rounded-full">
             Admin
           </span>
         )}
       </div>
 
-      {/* Name */}
-      <div className="bg-white rounded-2xl border border-stone-100 p-4 space-y-3 mb-4">
-        <h2 className="font-semibold text-stone-700 text-sm">
-          {locale === "hi" ? "नाम" : "Name"}
-        </h2>
-        <div className="flex gap-2">
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={locale === "hi" ? "अपना नाम दर्ज करें" : "Enter your name"}
-            onKeyDown={(e) => e.key === "Enter" && saveName()}
-          />
-          <Button
-            onClick={saveName}
-            disabled={saving || !name.trim() || name === profile.name}
-            className="bg-green-700 hover:bg-green-800 shrink-0"
+      {/* Avatar overlapping hero */}
+      <div className="flex flex-col items-center -mt-14 mb-2 relative z-10">
+        <div className="relative">
+          <div className="w-24 h-24 rounded-full overflow-hidden bg-green-100 border-4 border-white shadow-xl flex items-center justify-center">
+            {profile.profile_photo_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profile.profile_photo_url} alt={profile.name ?? ""} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-3xl font-black text-green-700">{initials}</span>
+            )}
+          </div>
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="absolute bottom-0 right-0 bg-green-600 text-white rounded-full p-1.5 shadow-md hover:bg-green-700 border-2 border-white"
           >
-            {saving ? "..." : (locale === "hi" ? "सहेजें" : "Save")}
-          </Button>
+            <Camera className="h-3.5 w-3.5" />
+          </button>
         </div>
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={uploadAvatar} />
+        {uploading && <p className="text-xs text-stone-400 mt-1">अपलोड हो रहा है...</p>}
+        <p className="mt-2 text-lg font-black text-stone-800">{profile.name ?? "—"}</p>
+        {digitalId && <p className="text-xs font-mono text-green-600 font-semibold">{digitalId}</p>}
       </div>
 
-      {/* Phone + Digital ID */}
-      <div className="bg-white rounded-2xl border border-stone-100 p-4 mb-4 space-y-3">
-        <div className="flex items-center gap-3">
-          <Phone className="h-4 w-4 text-stone-400" />
-          <div>
-            <p className="text-xs text-stone-400">{locale === "hi" ? "मोबाइल नंबर" : "Phone"}</p>
-            <p className="font-medium text-stone-800">{profile.phone}</p>
+      <div className="px-4 pb-8 space-y-3">
+
+        {/* Name */}
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4 space-y-3">
+          <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide">नाम बदलें</p>
+          <div className="flex gap-2">
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="अपना नाम दर्ज करें"
+              onKeyDown={(e) => e.key === "Enter" && saveName()}
+              className="h-11 rounded-xl border-stone-200"
+            />
+            <Button
+              onClick={saveName}
+              disabled={saving || !name.trim() || name === profile.name}
+              className="h-11 px-5 rounded-xl shrink-0"
+            >
+              {saving ? "..." : "सहेजें"}
+            </Button>
           </div>
         </div>
-        {profile.digital_id && (
-          <div className="flex items-center gap-3 pt-1 border-t border-stone-50">
-            <span className="text-lg">🪪</span>
+
+        {/* Phone + Digital ID */}
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 divide-y divide-stone-50">
+          <div className="flex items-center gap-3 px-4 py-3.5">
+            <div className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center">
+              <Phone className="h-3.5 w-3.5 text-stone-500" />
+            </div>
             <div>
-              <p className="text-xs text-stone-400">{locale === "hi" ? "Digital ID" : "Digital ID"}</p>
-              <p className="font-bold text-green-700 tracking-wider">
-                JGP-{String(profile.digital_id).padStart(4, "0")}
-              </p>
+              <p className="text-[11px] text-stone-400 font-medium uppercase tracking-wide">मोबाइल नंबर</p>
+              <p className="text-sm font-semibold text-stone-800">{profile.phone}</p>
             </div>
           </div>
-        )}
-      </div>
-
-      {/* Student details */}
-      <div className="bg-white rounded-2xl border border-stone-100 p-4 space-y-3 mb-4">
-        <h2 className="font-semibold text-stone-700 text-sm">
-          {locale === "hi" ? "शिक्षा और परीक्षा" : "Education & Exam"}
-        </h2>
-        <div>
-          <label className="text-xs text-stone-400 block mb-1">{locale === "hi" ? "शिक्षा का स्तर" : "Education"}</label>
-          <select
-            value={educationLevel}
-            onChange={(e) => setEducationLevel(e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="">{locale === "hi" ? "चुनें..." : "Select..."}</option>
-            {EDUCATION_LEVELS.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="text-xs text-stone-400 block mb-1">{locale === "hi" ? "परीक्षा की तैयारी" : "Exam target"}</label>
-          <select
-            value={examTarget}
-            onChange={(e) => setExamTarget(e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="">{locale === "hi" ? "चुनें..." : "Select..."}</option>
-            {EXAMS.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="text-xs text-stone-400 block mb-1">{locale === "hi" ? "स्कूल / कॉलेज" : "School / College"}</label>
-          <Input
-            value={schoolName}
-            onChange={(e) => setSchoolName(e.target.value)}
-            placeholder={locale === "hi" ? "संस्था का नाम" : "Institution name"}
-          />
-        </div>
-        <Button
-          onClick={saveStudentDetails}
-          disabled={savingStudent}
-          className="w-full bg-green-700 hover:bg-green-800"
-        >
-          {savingStudent ? "..." : (locale === "hi" ? "जानकारी सहेजें" : "Save Details")}
-        </Button>
-      </div>
-
-      {/* WhatsApp notifications */}
-      <div
-        className="bg-white rounded-2xl border border-stone-100 p-4 mb-6 flex items-center justify-between cursor-pointer"
-        onClick={toggleOptIn}
-      >
-        <div className="flex items-center gap-3">
-          {profile.wa_opt_in ? (
-            <Bell className="h-4 w-4 text-green-600" />
-          ) : (
-            <BellOff className="h-4 w-4 text-stone-400" />
+          {digitalId && (
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-base">
+                🪪
+              </div>
+              <div>
+                <p className="text-[11px] text-stone-400 font-medium uppercase tracking-wide">Digital ID</p>
+                <p className="text-sm font-bold text-green-700 tracking-wider">{digitalId}</p>
+              </div>
+            </div>
           )}
+        </div>
+
+        {/* Student details */}
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4 space-y-3">
+          <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide">शिक्षा और परीक्षा</p>
+
           <div>
-            <p className="font-medium text-stone-800 text-sm">
-              {locale === "hi" ? "WhatsApp सूचनाएं" : "WhatsApp Notifications"}
-            </p>
-            <p className="text-xs text-stone-400">
+            <label className="text-xs text-stone-400 block mb-1.5">शिक्षा का स्तर</label>
+            <select
+              value={educationLevel}
+              onChange={(e) => setEducationLevel(e.target.value)}
+              className="w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm focus:border-green-500 focus:outline-none"
+            >
+              <option value="">चुनें...</option>
+              {EDUCATION_LEVELS.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs text-stone-400 block mb-1.5">परीक्षा की तैयारी</label>
+            <select
+              value={examTarget}
+              onChange={(e) => setExamTarget(e.target.value)}
+              className="w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm focus:border-green-500 focus:outline-none"
+            >
+              <option value="">चुनें...</option>
+              {EXAMS.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs text-stone-400 block mb-1.5">स्कूल / कॉलेज</label>
+            <Input
+              value={schoolName}
+              onChange={(e) => setSchoolName(e.target.value)}
+              placeholder="संस्था का नाम"
+              className="h-12 rounded-xl border-stone-200"
+            />
+          </div>
+
+          <Button onClick={saveStudentDetails} disabled={savingStudent} className="w-full h-11 rounded-xl font-semibold">
+            {savingStudent ? "सहेजा जा रहा है..." : "जानकारी सहेजें ✓"}
+          </Button>
+        </div>
+
+        {/* WhatsApp notifications toggle */}
+        <div
+          className="bg-white rounded-2xl shadow-sm border border-stone-100 px-4 py-3.5 flex items-center justify-between cursor-pointer active:bg-stone-50 transition-colors"
+          onClick={toggleOptIn}
+        >
+          <div className="flex items-center gap-3">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${profile.wa_opt_in ? "bg-green-100" : "bg-stone-100"}`}>
               {profile.wa_opt_in
-                ? (locale === "hi" ? "चालू है" : "Enabled")
-                : (locale === "hi" ? "बंद है" : "Disabled")}
-            </p>
+                ? <Bell className="h-3.5 w-3.5 text-green-600" />
+                : <BellOff className="h-3.5 w-3.5 text-stone-400" />
+              }
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-stone-800">WhatsApp सूचनाएं</p>
+              <p className="text-xs text-stone-400">{profile.wa_opt_in ? "चालू है" : "बंद है"}</p>
+            </div>
+          </div>
+          <div className={`w-11 h-6 rounded-full transition-colors duration-200 ${profile.wa_opt_in ? "bg-green-500" : "bg-stone-200"}`}>
+            <div className={`w-5 h-5 bg-white rounded-full shadow m-0.5 transition-transform duration-200 ${profile.wa_opt_in ? "translate-x-5" : "translate-x-0"}`} />
           </div>
         </div>
-        <div className={`w-11 h-6 rounded-full transition-colors ${profile.wa_opt_in ? "bg-green-500" : "bg-stone-200"}`}>
-          <div className={`w-5 h-5 bg-white rounded-full shadow m-0.5 transition-transform ${profile.wa_opt_in ? "translate-x-5" : "translate-x-0"}`} />
-        </div>
+
+        {/* Logout */}
+        <button
+          onClick={logout}
+          className="w-full bg-white rounded-2xl shadow-sm border border-red-100 px-4 py-3.5 flex items-center justify-between text-red-500 hover:bg-red-50 transition-colors active:bg-red-50"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+              <LogOut className="h-3.5 w-3.5 text-red-400" />
+            </div>
+            <span className="text-sm font-semibold">लॉगआउट</span>
+          </div>
+          <ChevronRight className="h-4 w-4 text-red-300" />
+        </button>
       </div>
-
-      <Separator className="mb-6" />
-
-      {/* Logout */}
-      <button
-        onClick={logout}
-        className="flex items-center gap-2 text-red-500 hover:text-red-700 text-sm font-medium"
-      >
-        <LogOut className="h-4 w-4" />
-        {locale === "hi" ? "लॉगआउट" : "Logout"}
-      </button>
     </div>
   );
 }

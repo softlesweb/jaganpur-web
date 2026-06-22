@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { Home, BookOpen, Image, Settings, UserCircle } from "lucide-react";
+import { Home, Settings, UserCircle } from "lucide-react";
 
 interface Props {
   role: "resident" | "admin";
@@ -22,23 +22,31 @@ export default function BottomNav({ role }: Props) {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 safe-area-bottom z-50">
-      <div className="flex items-center justify-around max-w-lg mx-auto px-2 h-16">
-        {links.map(({ href, label, icon: Icon }) => {
-          const isActive = pathname === href || (href !== `/${locale}` && pathname.startsWith(href));
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors ${
-                isActive ? "text-green-700" : "text-stone-400 hover:text-stone-600"
-              }`}
-            >
-              <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 1.8} />
-              <span className="text-[10px] font-medium">{label}</span>
-            </Link>
-          );
-        })}
+    <nav className="fixed bottom-0 left-0 right-0 z-50 safe-area-bottom">
+      <div className="bg-white border-t border-stone-100 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+        <div className="flex items-center justify-around max-w-lg mx-auto px-4 h-16">
+          {links.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href || (href !== `/${locale}` && pathname.startsWith(href));
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`flex flex-col items-center gap-0.5 px-5 py-2 rounded-2xl transition-all duration-200 ${
+                  isActive
+                    ? "bg-green-50 text-green-700"
+                    : "text-stone-400 hover:text-stone-600"
+                }`}
+              >
+                <Icon
+                  className={`h-5 w-5 transition-all ${isActive ? "stroke-[2.5]" : "stroke-[1.7]"}`}
+                />
+                <span className={`text-[10px] font-semibold tracking-wide ${isActive ? "text-green-700" : ""}`}>
+                  {label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

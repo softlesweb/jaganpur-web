@@ -34,14 +34,17 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages} locale={locale}>
       <div lang={locale} className="flex flex-col min-h-screen">
         {session && (
-          <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-stone-100">
-            <div className="max-w-lg mx-auto px-4 h-12 flex items-center justify-between">
-              <span className="font-semibold text-green-800 text-sm">🌾 जगनपुर</span>
+          <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-green-100 shadow-sm">
+            <div className="max-w-lg mx-auto px-4 h-13 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🎓</span>
+                <span className="font-bold text-green-800 text-sm tracking-tight">जगनपुर छात्र पोर्टल</span>
+              </div>
               <LanguageToggle />
             </div>
           </header>
         )}
-        <main className="flex-1 pb-20">{children}</main>
+        <main className="flex-1 pb-24">{children}</main>
         {session && <BottomNav role={session.role} />}
       </div>
       <Toaster position="top-center" richColors />
