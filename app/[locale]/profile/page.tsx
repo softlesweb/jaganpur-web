@@ -33,12 +33,18 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetch("/api/profile")
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 401) { router.push(`/${locale}/login`); return null; }
+        if (!r.ok) throw new Error(`Profile fetch failed: ${r.status}`);
+        return r.json();
+      })
       .then((data) => {
+        if (!data) return;
         setProfile(data);
         setName(data.name ?? "");
-      });
-  }, []);
+      })
+      .catch((err) => console.error(err));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function saveName() {
     if (!name.trim()) return;

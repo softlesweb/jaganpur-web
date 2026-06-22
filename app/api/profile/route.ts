@@ -7,7 +7,8 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const db = createAdminClient();
-  const { data } = await db.from("profiles").select("*").eq("id", session.id).single();
+  const { data, error } = await db.from("profiles").select("*").eq("id", session.id).single();
+  if (error || !data) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   return NextResponse.json(data);
 }
 
