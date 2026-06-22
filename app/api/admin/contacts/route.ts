@@ -25,6 +25,25 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(data, { status: 201 });
 }
 
+export async function PATCH(req: NextRequest) {
+  try {
+    await requireAdmin();
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { id, name, category, phone, address, hours } = await req.json();
+  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  const db = createAdminClient();
+  const { data, error } = await db
+    .from("contacts")
+    .update({ name, category, phone: phone || null, address: address || null, hours: hours || null })
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
+}
+
 export async function DELETE(req: NextRequest) {
   try {
     await requireAdmin();

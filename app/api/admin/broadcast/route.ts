@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
-import { sendAnnouncementBroadcast } from "@/lib/whatsapp";
+import { sendRawBroadcast } from "@/lib/whatsapp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,8 +26,7 @@ export async function POST(req: NextRequest) {
   }
 
   const phones = residents.map((r) => r.phone);
-  const appUrl = `${process.env.NEXT_PUBLIC_APP_URL}/hi`;
-  const result = await sendAnnouncementBroadcast(phones, title ?? message.slice(0, 60), "general", appUrl);
+  const result = await sendRawBroadcast(phones, message);
 
   return NextResponse.json(result);
 }

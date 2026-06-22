@@ -55,6 +55,14 @@ export async function sendAnnouncementBroadcast(
   return { total: phones.length, failed };
 }
 
+export async function sendRawBroadcast(phones: string[], message: string) {
+  const results = await Promise.allSettled(
+    phones.map((phone) => bridgeSend(phone, message))
+  );
+  const failed = results.filter((r) => r.status === "rejected").length;
+  return { total: phones.length, failed };
+}
+
 export async function getContactName(phone: string): Promise<string | null> {
   // Look up push_name from bridge's local chat DB
   const jid = `${phone.replace(/^\+/, "").replace(/\D/g, "")}@s.whatsapp.net`;
