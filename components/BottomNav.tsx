@@ -17,8 +17,6 @@ export default function BottomNav({ role }: Props) {
 
   const links = [
     { href: `/${locale}`, label: t("home"), icon: Home },
-    { href: `/${locale}/directory`, label: t("directory"), icon: BookOpen },
-    { href: `/${locale}/gallery`, label: t("gallery"), icon: Image },
     ...(role === "admin" ? [{ href: `/${locale}/admin`, label: t("admin"), icon: Settings }] : []),
     { href: `/${locale}/profile`, label: tCommon("profile"), icon: UserCircle },
   ];

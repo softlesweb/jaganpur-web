@@ -21,6 +21,9 @@ interface Resident {
   role: "resident" | "admin";
   wa_opt_in: boolean;
   digital_id: number | null;
+  education_level: string | null;
+  exam_target: string | null;
+  school_name: string | null;
   created_at: string;
 }
 
@@ -54,11 +57,11 @@ export default function AdminPage() {
   }, []);
 
   const tabs: { key: AdminTab; label: string }[] = [
+    { key: "residents", label: t("students") },
+    { key: "broadcast", label: t("broadcast") },
     { key: "announcements", label: t("announcements") },
     { key: "contacts", label: t("contacts") },
     { key: "gallery", label: t("gallery") },
-    { key: "residents", label: t("residents") },
-    { key: "broadcast", label: t("broadcast") },
   ];
 
   return (
@@ -97,11 +100,11 @@ export default function AdminPage() {
         ))}
       </div>
 
+      {tab === "residents" && <ResidentsTab />}
+      {tab === "broadcast" && <BroadcastTab optedIn={stats?.opted_in ?? 0} />}
       {tab === "announcements" && <AnnouncementsTab onChanged={() => setStats(null)} />}
       {tab === "contacts" && <ContactsTab />}
       {tab === "gallery" && <GalleryTab />}
-      {tab === "residents" && <ResidentsTab />}
-      {tab === "broadcast" && <BroadcastTab optedIn={stats?.opted_in ?? 0} />}
     </div>
   );
 }
@@ -432,17 +435,26 @@ function GalleryTab() {
   );
 }
 
-/* ───────────────────── RESIDENTS ───────────────────── */
+const EXAM_LABELS: Record<string, string> = {
+  ssc: "SSC", upsc: "UPSC", railway: "Railway", up_police: "UP Police",
+  bank: "Bank", tet: "TET/CTET", neet: "NEET", jee: "JEE", up_lekhpal: "UP Lekhpal", other: "अन्य",
+};
+const EDU_LABELS: Record<string, string> = {
+  "10th": "10वीं", "12th": "12वीं", graduate: "ग्रेजुएट", post_graduate: "PG", diploma: "डिप्लोमा", other: "अन्य",
+};
+
+/* ───────────────────── RESIDENTS / STUDENTS ───────────────────── */
 function ResidentsTab() {
   const t = useTranslations("admin");
   const [residents, setResidents] = useState<Resident[]>([]);
   const [search, setSearch] = useState("");
+  const [examFilter, setExamFilter] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/admin/residents")
       .then((r) => r.json())
-      .then((data) => { setResidents(data ?? []); setLoading(false); });
+      .then((data) => { setResidents(Array.isArray(data) ? data : []); setLoading(false); });
   }, []);
 
   async function toggleRole(r: Resident) {
@@ -455,7 +467,7 @@ function ResidentsTab() {
     const data = await res.json();
     if (!res.ok) { toast.error(data.error); return; }
     setResidents((prev) => prev.map((x) => x.id === r.id ? data : x));
-    toast.success(newRole === "admin" ? "Admin बनाया गया" : "Resident बनाया गया");
+    toast.success(newRole === "admin" ? "Admin बनाया गया" : "Student बनाया गया");
   }
 
   async function toggleWa(r: Resident) {
@@ -470,68 +482,91 @@ function ResidentsTab() {
     setResidents((prev) => prev.map((x) => x.id === r.id ? data : x));
   }
 
+  const examsPresent = [...new Set(residents.map((r) => r.exam_target).filter(Boolean))] as string[];
+
   const filtered = residents.filter((r) => {
     const q = search.toLowerCase();
-    return !q || r.name?.toLowerCase().includes(q) || r.phone.includes(q);
+    const matchSearch = !q || r.name?.toLowerCase().includes(q) || r.phone.includes(q);
+    const matchExam = !examFilter || r.exam_target === examFilter;
+    return matchSearch && matchExam;
   });
 
   if (loading) return <div className="flex justify-center py-10"><div className="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full" /></div>;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Users className="h-4 w-4 text-stone-400" />
+    <div className="space-y-3">
+      <div className="flex gap-2">
         <Input
-          placeholder={t("searchResident")}
+          placeholder={t("searchStudent")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="h-9"
         />
+        <select
+          value={examFilter}
+          onChange={(e) => setExamFilter(e.target.value)}
+          className="h-9 rounded-md border border-input bg-background px-2 text-xs shrink-0"
+        >
+          <option value="">सभी</option>
+          {examsPresent.map((ex) => (
+            <option key={ex} value={ex}>{EXAM_LABELS[ex] ?? ex}</option>
+          ))}
+        </select>
       </div>
+
+      <p className="text-xs text-stone-400">{filtered.length} छात्र</p>
 
       <div className="space-y-2">
         {filtered.length === 0 && (
-          <p className="text-center text-stone-400 text-sm py-8">{t("noResidents")}</p>
+          <p className="text-center text-stone-400 text-sm py-8">{t("noStudents")}</p>
         )}
         {filtered.map((r) => {
           const initials = (r.name ?? r.phone.slice(-4)).split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
           const digitalId = r.digital_id ? `JGP-${String(r.digital_id).padStart(4, "0")}` : "—";
           return (
-            <div key={r.id} className="bg-white rounded-xl border border-stone-100 p-3 flex items-center gap-3">
-              {/* Avatar */}
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                <span className="text-sm font-bold text-green-700">{initials}</span>
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <p className="font-medium text-sm truncate">{r.name ?? "—"}</p>
-                  {r.role === "admin" && (
-                    <span className="text-[10px] bg-green-100 text-green-700 font-semibold px-1.5 py-0.5 rounded-full shrink-0">Admin</span>
+            <div key={r.id} className="bg-white rounded-xl border border-stone-100 p-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                  <span className="text-sm font-bold text-green-700">{initials}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-medium text-sm truncate">{r.name ?? "—"}</p>
+                    {r.role === "admin" && (
+                      <span className="text-[10px] bg-green-100 text-green-700 font-semibold px-1.5 py-0.5 rounded-full shrink-0">Admin</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-stone-400">{digitalId} • {r.phone}</p>
+                  {(r.education_level || r.exam_target) && (
+                    <div className="flex gap-1 mt-1 flex-wrap">
+                      {r.education_level && (
+                        <span className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full">
+                          {EDU_LABELS[r.education_level] ?? r.education_level}
+                        </span>
+                      )}
+                      {r.exam_target && (
+                        <span className="text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full">
+                          {EXAM_LABELS[r.exam_target] ?? r.exam_target}
+                        </span>
+                      )}
+                      {r.school_name && (
+                        <span className="text-[10px] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded-full truncate max-w-[120px]">
+                          {r.school_name}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
-                <p className="text-xs text-stone-400">{digitalId} • {r.phone}</p>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2 shrink-0">
-                {/* WA toggle */}
-                <button
-                  onClick={() => toggleWa(r)}
-                  title={r.wa_opt_in ? "WA on" : "WA off"}
-                  className={`p-1.5 rounded-full transition-colors ${r.wa_opt_in ? "text-green-600 bg-green-50" : "text-stone-300 bg-stone-50"}`}
-                >
-                  {r.wa_opt_in ? <Bell className="h-3.5 w-3.5" /> : <BellOff className="h-3.5 w-3.5" />}
-                </button>
-                {/* Role toggle */}
-                <button
-                  onClick={() => toggleRole(r)}
-                  title={r.role === "admin" ? t("makeResident") : t("makeAdmin")}
-                  className="text-xs px-2 py-1 rounded-lg border border-stone-200 text-stone-500 hover:border-green-400 hover:text-green-700 transition-colors"
-                >
-                  {r.role === "admin" ? "↓ User" : "↑ Admin"}
-                </button>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button onClick={() => toggleWa(r)}
+                    className={`p-1.5 rounded-full transition-colors ${r.wa_opt_in ? "text-green-600 bg-green-50" : "text-stone-300 bg-stone-50"}`}>
+                    {r.wa_opt_in ? <Bell className="h-3.5 w-3.5" /> : <BellOff className="h-3.5 w-3.5" />}
+                  </button>
+                  <button onClick={() => toggleRole(r)}
+                    className="text-xs px-2 py-1 rounded-lg border border-stone-200 text-stone-500 hover:border-green-400 hover:text-green-700 transition-colors">
+                    {r.role === "admin" ? "↓" : "↑ Admin"}
+                  </button>
+                </div>
               </div>
             </div>
           );

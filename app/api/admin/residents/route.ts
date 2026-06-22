@@ -12,7 +12,7 @@ export async function GET() {
   const db = createAdminClient();
   const { data, error } = await db
     .from("profiles")
-    .select("id, phone, name, role, wa_opt_in, digital_id, created_at")
+    .select("id, phone, name, role, wa_opt_in, digital_id, education_level, exam_target, school_name, created_at")
     .order("digital_id", { ascending: true });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -39,7 +39,7 @@ export async function PATCH(req: NextRequest) {
     .from("profiles")
     .update(filtered)
     .eq("id", id)
-    .select("id, phone, name, role, wa_opt_in, digital_id, created_at")
+    .select("id, phone, name, role, wa_opt_in, digital_id, education_level, exam_target, school_name, created_at")
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

@@ -9,6 +9,28 @@ import { Separator } from "@/components/ui/separator";
 import { Camera, Phone, Bell, BellOff, LogOut } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 
+const EDUCATION_LEVELS = [
+  { value: "10th", label: "हाई स्कूल (10वीं)" },
+  { value: "12th", label: "इंटर (12वीं)" },
+  { value: "graduate", label: "स्नातक (ग्रेजुएट)" },
+  { value: "post_graduate", label: "स्नातकोत्तर" },
+  { value: "diploma", label: "डिप्लोमा" },
+  { value: "other", label: "अन्य" },
+];
+
+const EXAMS = [
+  { value: "ssc", label: "SSC (CGL / CHSL / MTS)" },
+  { value: "upsc", label: "UPSC (IAS / IPS)" },
+  { value: "railway", label: "Railway (NTPC / Group D)" },
+  { value: "up_police", label: "UP Police" },
+  { value: "bank", label: "Bank (PO / Clerk)" },
+  { value: "tet", label: "TET / CTET (शिक्षक)" },
+  { value: "neet", label: "NEET (मेडिकल)" },
+  { value: "jee", label: "JEE (इंजीनियरिंग)" },
+  { value: "up_lekhpal", label: "UP Lekhpal" },
+  { value: "other", label: "अन्य" },
+];
+
 interface Profile {
   id: string;
   phone: string;
@@ -17,6 +39,9 @@ interface Profile {
   wa_opt_in: boolean;
   profile_photo_url: string | null;
   digital_id: number | null;
+  education_level: string | null;
+  exam_target: string | null;
+  school_name: string | null;
 }
 
 export default function ProfilePage() {
@@ -27,7 +52,11 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [name, setName] = useState("");
+  const [educationLevel, setEducationLevel] = useState("");
+  const [examTarget, setExamTarget] = useState("");
+  const [schoolName, setSchoolName] = useState("");
   const [saving, setSaving] = useState(false);
+  const [savingStudent, setSavingStudent] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -42,6 +71,9 @@ export default function ProfilePage() {
         if (!data) return;
         setProfile(data);
         setName(data.name ?? "");
+        setEducationLevel(data.education_level ?? "");
+        setExamTarget(data.exam_target ?? "");
+        setSchoolName(data.school_name ?? "");
       })
       .catch((err) => console.error(err));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -75,6 +107,20 @@ export default function ProfilePage() {
         : (locale === "hi" ? "WhatsApp सूचनाएं बंद" : "WhatsApp notifications off")
       );
     }
+  }
+
+  async function saveStudentDetails() {
+    setSavingStudent(true);
+    const res = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ education_level: educationLevel || null, exam_target: examTarget || null, school_name: schoolName.trim() || null }),
+    });
+    const data = await res.json();
+    setSavingStudent(false);
+    if (!res.ok) { toast.error(data.error); return; }
+    setProfile((p) => p ? { ...p, education_level: data.education_level, exam_target: data.exam_target, school_name: data.school_name } : p);
+    toast.success(locale === "hi" ? "जानकारी सहेजी गई" : "Details saved");
   }
 
   async function uploadAvatar() {
@@ -201,6 +247,50 @@ export default function ProfilePage() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Student details */}
+      <div className="bg-white rounded-2xl border border-stone-100 p-4 space-y-3 mb-4">
+        <h2 className="font-semibold text-stone-700 text-sm">
+          {locale === "hi" ? "शिक्षा और परीक्षा" : "Education & Exam"}
+        </h2>
+        <div>
+          <label className="text-xs text-stone-400 block mb-1">{locale === "hi" ? "शिक्षा का स्तर" : "Education"}</label>
+          <select
+            value={educationLevel}
+            onChange={(e) => setEducationLevel(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            <option value="">{locale === "hi" ? "चुनें..." : "Select..."}</option>
+            {EDUCATION_LEVELS.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="text-xs text-stone-400 block mb-1">{locale === "hi" ? "परीक्षा की तैयारी" : "Exam target"}</label>
+          <select
+            value={examTarget}
+            onChange={(e) => setExamTarget(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            <option value="">{locale === "hi" ? "चुनें..." : "Select..."}</option>
+            {EXAMS.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="text-xs text-stone-400 block mb-1">{locale === "hi" ? "स्कूल / कॉलेज" : "School / College"}</label>
+          <Input
+            value={schoolName}
+            onChange={(e) => setSchoolName(e.target.value)}
+            placeholder={locale === "hi" ? "संस्था का नाम" : "Institution name"}
+          />
+        </div>
+        <Button
+          onClick={saveStudentDetails}
+          disabled={savingStudent}
+          className="w-full bg-green-700 hover:bg-green-800"
+        >
+          {savingStudent ? "..." : (locale === "hi" ? "जानकारी सहेजें" : "Save Details")}
+        </Button>
       </div>
 
       {/* WhatsApp notifications */}

@@ -43,4 +43,8 @@ export interface Profile {
   name: string | null;
   role: "resident" | "admin";
   wa_opt_in: boolean;
+  digital_id: number | null;
+  education_level: string | null;
+  exam_target: string | null;
+  school_name: string | null;
 }

@@ -47,10 +47,10 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Fetch digital_id
+  // Fetch full profile
   const { data: profile } = await db
     .from("profiles")
-    .select("digital_id")
+    .select("digital_id, education_level, exam_target, school_name")
     .eq("id", user.id)
     .single();
 
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
   const response = NextResponse.json({
     success: true,
-    user: { ...user, digital_id: profile?.digital_id },
+    user: { ...user, digital_id: profile?.digital_id, education_level: profile?.education_level ?? null },
     is_new_user: isNewUser,
   });
   response.cookies.set("auth_token", token, {

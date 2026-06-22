@@ -20,6 +20,9 @@ export async function PATCH(req: NextRequest) {
   const updates: Record<string, unknown> = {};
   if (body.name !== undefined) updates.name = body.name.trim() || null;
   if (body.wa_opt_in !== undefined) updates.wa_opt_in = Boolean(body.wa_opt_in);
+  if (body.education_level !== undefined) updates.education_level = body.education_level || null;
+  if (body.exam_target !== undefined) updates.exam_target = body.exam_target || null;
+  if (body.school_name !== undefined) updates.school_name = body.school_name || null;
 
   const db = createAdminClient();
   const { data, error } = await db
